@@ -11,14 +11,29 @@ namespace GestionRestaurant
     {
         private const string ConnectionString = "Server=localhost;Database=restaurants;Uid=zandry;Pwd=admin;";
         private int selectedId;
+        private Timer animationTimer = new Timer();
+        private int currentColorIndex = 0;
+        private Color[] lightColors = { Color.Red, Color.Orange, Color.Yellow, Color.Green, Color.Blue, Color.Indigo, Color.Violet };
 
         public recept()
         {
             InitializeComponent();
+            animationTimer.Interval = 500;
+            animationTimer.Tick += AnimationTimer_Tick;
+            animationTimer.Start();
             LoadTablesData();
             dataGridView1.SelectionChanged += DataGridView1_SelectionChanged;
         }
+        private void AnimationTimer_Tick(object sender, EventArgs e)
+        {
+            gunaLabel1.ForeColor = lightColors[currentColorIndex];
+            gunaLabel3.ForeColor = lightColors[currentColorIndex];
+            gunaLabel4.ForeColor = lightColors[currentColorIndex];
+            gunaLabel5.ForeColor = lightColors[currentColorIndex];
+            gunaLabel6.ForeColor = lightColors[currentColorIndex];
 
+            currentColorIndex = (currentColorIndex + 1) % lightColors.Length;
+        }
         private MySqlConnection OpenConnection()
         {
             MySqlConnection connection = new MySqlConnection(ConnectionString);
@@ -32,7 +47,7 @@ namespace GestionRestaurant
             {
                 using (MySqlConnection connection = OpenConnection())
                 {
-                    string query = "SELECT nom FROM tables";
+                    string query = "SELECT t.nom FROM tables t WHERE t.id_table NOT IN (SELECT DISTINCT id_table FROM commande)";
                     MySqlCommand command = new MySqlCommand(query, connection);
 
                     using (MySqlDataReader reader = command.ExecuteReader())
@@ -59,7 +74,7 @@ namespace GestionRestaurant
             {
                 using (MySqlConnection connection = OpenConnection())
                 {
-                    string query = "SELECT ID_Plat, Nom, Description, Prix, Categorie FROM plat";
+                    string query = "SELECT ID_Plat, Nom, Description, Prix, Categorie FROM plat WHERE nombre > 0";
                     MySqlCommand command = new MySqlCommand(query, connection);
 
                     using (MySqlDataAdapter adapter = new MySqlDataAdapter(command))
@@ -148,5 +163,87 @@ namespace GestionRestaurant
 
             return new Bitmap(image, newWidth, newHeight);
         }
+        private void EnregistrerCommande(int idPlat, int idTable, int quantite, string client)
+        {
+            try
+            {
+                using (MySqlConnection connection = OpenConnection())
+                {
+                    string insertCommandQuery = "INSERT INTO commande (date_commande, id_plat, id_table, quantite, clt) " +
+                                               "VALUES (@date, @idPlat, @idTable, @quantite, @clt)";
+
+                    MySqlCommand insertCommand = new MySqlCommand(insertCommandQuery, connection);
+                    insertCommand.Parameters.AddWithValue("@date", DateTime.Now);
+                    insertCommand.Parameters.AddWithValue("@idPlat", idPlat);
+                    insertCommand.Parameters.AddWithValue("@idTable", idTable);
+                    insertCommand.Parameters.AddWithValue("@quantite", quantite);
+                    insertCommand.Parameters.AddWithValue("@clt", client);
+
+                    int rowsAffected = insertCommand.ExecuteNonQuery();
+
+                    if (rowsAffected > 0)
+                    {
+                        MessageBox.Show("La commande a été enregistrée avec succès.", "Succès", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        LoadTablesData();
+                        LoadPlatsData();
+                        Livraison lvr = new Livraison();
+                        lvr.LoadCommandeData();
+                    }
+                    else
+                    {
+                        MessageBox.Show("La commande n'a pas pu être enregistrée.", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Erreur lors de l'enregistrement de la commande : " + ex.Message, "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+
+        private void gunaGradientButton1_Click(object sender, EventArgs e)
+        {
+            if (dataGridView1.SelectedRows.Count > 0 && comboBox1.SelectedItem != null && numeric.Value > 0 && !string.IsNullOrWhiteSpace(textBox1.Text))
+            {
+                int selectedIdPlat = Convert.ToInt32(dataGridView1.SelectedRows[0].Cells["ID_Plat"].Value);
+                int selectedIdTable = GetSelectedTableId();
+
+                int quantite = (int)numeric.Value;
+                string client = textBox1.Text;
+
+                EnregistrerCommande(selectedIdPlat, selectedIdTable, quantite, client);
+                comboBox1.Text = " ";
+                textBox1.Text = " ";
+                numeric.Value = 0;
+            }
+            else
+            {
+                MessageBox.Show("Veuillez sélectionner un plat, une table, spécifier la quantité et le client.", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+        }
+
+        private int GetSelectedTableId()
+        {
+            if (comboBox1.SelectedItem != null)
+            {
+                using (MySqlConnection connection = OpenConnection())
+                {
+                    string query = "SELECT id_table FROM tables WHERE nom = @nom";
+                    MySqlCommand command = new MySqlCommand(query, connection);
+                    command.Parameters.AddWithValue("@nom", comboBox1.SelectedItem.ToString());
+
+                    object idObj = command.ExecuteScalar();
+                    if (idObj != null)
+                    {
+                        return Convert.ToInt32(idObj);
+                    }
+                }
+            }
+
+            return -1;
+        }
+
+
     }
 }

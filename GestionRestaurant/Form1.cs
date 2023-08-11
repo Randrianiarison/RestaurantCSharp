@@ -13,9 +13,11 @@ namespace GestionRestaurant
         {
             InitializeComponent();
             recept3.Visible = false;
-            home1.Hide(); 
-            recept3.Hide(); 
-
+           // home1.Hide(); 
+            Livraison lvr = new Livraison();
+            lvr.LoadCommandeData();
+            recept3.Hide();
+            livraison1.Visible = false;
             timer = new Timer
             {
                 Interval = 50
@@ -35,16 +37,11 @@ namespace GestionRestaurant
 
         private void gunaGradientButton1_Click(object sender, EventArgs e)
         {
-            home1.Show();
+            livraison1.Hide();
+            recept3.Hide();
+            //home1.Show();
             home1.BringToFront();
         }
-
-        private void home1_Load(object sender, EventArgs e)
-        {
-            startX = gunaLabel1.Location.X;
-            timer.Start();
-        }
-
         private void Timer_Tick(object sender, EventArgs e)
         {
             AnimateLabelHorizontal(gunaLabel1, home1.Width);
@@ -69,14 +66,36 @@ namespace GestionRestaurant
         private void gunaGradientButton4_Click(object sender, EventArgs e)
         {
             home1.Hide();
+            livraison1.Hide();
             recept3.BringToFront();
             recept3.Show();
         }
 
         private void gunaGradientButton5_Click(object sender, EventArgs e)
         {
-          
+           
+            livraison1.BringToFront();
+            livraison1.Show();
         }
 
+        private void gunaPanel1_Paint(object sender, PaintEventArgs e)
+        {
+            home1.Visible = false;
+        }
+
+        private void home2_Load(object sender, EventArgs e)
+        {
+            startX = gunaLabel1.Location.X;
+            timer.Start();
+        }
+
+        private void gunaGradientButton6_Click(object sender, EventArgs e)
+        {
+            Livraison lvr = new Livraison();
+            lvr.LoadCommandeData();
+            crud cr = new crud();
+            this.Enabled = false;
+            cr.Show();
+        }
     }
 }

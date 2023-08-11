@@ -233,5 +233,11 @@ namespace GestionRestaurant
         {
             txtnom.Text = dataGridView1.SelectedRows[0].Cells["Nom"].ToString();
         }
+        private void gunaGradientButton4_Click(object sender, EventArgs e)
+        {
+            Form1 fr = new Form1();
+            fr.Enabled = true;
+            this.Close();
+        }
     }
 }
