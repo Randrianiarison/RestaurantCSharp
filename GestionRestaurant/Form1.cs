@@ -73,7 +73,8 @@ namespace GestionRestaurant
 
         private void gunaGradientButton5_Click(object sender, EventArgs e)
         {
-           
+            Livraison lvr = new Livraison();
+            lvr.LoadCommandeData();
             livraison1.BringToFront();
             livraison1.Show();
         }
@@ -91,8 +92,6 @@ namespace GestionRestaurant
 
         private void gunaGradientButton6_Click(object sender, EventArgs e)
         {
-            Livraison lvr = new Livraison();
-            lvr.LoadCommandeData();
             crud cr = new crud();
             this.Enabled = false;
             cr.Show();

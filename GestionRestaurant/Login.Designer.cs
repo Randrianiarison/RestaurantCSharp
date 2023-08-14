@@ -133,6 +133,7 @@
             this.gunaButton1.Size = new System.Drawing.Size(150, 33);
             this.gunaButton1.TabIndex = 6;
             this.gunaButton1.Text = "Mots de passe oublier ";
+            this.gunaButton1.Click += new System.EventHandler(this.gunaButton1_Click);
             // 
             // button1
             // 

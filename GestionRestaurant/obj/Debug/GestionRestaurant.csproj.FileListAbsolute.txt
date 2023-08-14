@@ -47,3 +47,4 @@ C:\Users\Ladina\source\repos\GestionRestaurant\GestionRestaurant\obj\Debug\Gesti
 C:\Users\Ladina\source\repos\GestionRestaurant\GestionRestaurant\obj\Debug\GestionRestaurant.Livraison.resources
 C:\Users\Ladina\source\repos\GestionRestaurant\GestionRestaurant\obj\Debug\GestionRestaurant.csproj.AssemblyReference.cache
 C:\Users\Ladina\source\repos\GestionRestaurant\GestionRestaurant\obj\Debug\GestionRestaurant.Login.resources
+C:\Users\Ladina\source\repos\GestionRestaurant\GestionRestaurant\obj\Debug\GestionRestaurant.Oulier.resources
