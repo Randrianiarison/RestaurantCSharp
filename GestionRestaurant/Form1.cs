@@ -13,7 +13,6 @@ namespace GestionRestaurant
         {
             InitializeComponent();
             recept3.Visible = false;
-           // home1.Hide(); 
             Livraison lvr = new Livraison();
             lvr.LoadCommandeData();
             recept3.Hide();
@@ -93,7 +92,7 @@ namespace GestionRestaurant
         private void gunaGradientButton6_Click(object sender, EventArgs e)
         {
             crud cr = new crud();
-            this.Enabled = false;
+            this.Visible = false;
             cr.Show();
         }
     }

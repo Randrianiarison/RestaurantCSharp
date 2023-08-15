@@ -49,7 +49,6 @@ namespace GestionRestaurant
                 {
                     string query = "SELECT t.nom FROM tables t WHERE t.id_table NOT IN (SELECT DISTINCT id_table FROM commande)";
                     MySqlCommand command = new MySqlCommand(query, connection);
-
                     using (MySqlDataReader reader = command.ExecuteReader())
                     {
                         while (reader.Read())
@@ -64,8 +63,6 @@ namespace GestionRestaurant
             {
                 MessageBox.Show("Erreur lors du chargement des types de parking : " + ex.Message, "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-
-            LoadPlatsData();
         }
 
         private void LoadPlatsData()

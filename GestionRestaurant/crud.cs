@@ -236,8 +236,7 @@ namespace GestionRestaurant
         private void gunaGradientButton4_Click(object sender, EventArgs e)
         {
             Form1 fr = new Form1();
-            fr.Dispose();
-            fr.Enabled = true;
+            fr.Visible = true;
             this.Close();
         }
     }
