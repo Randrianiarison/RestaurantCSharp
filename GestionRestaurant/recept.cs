@@ -13,7 +13,7 @@ namespace GestionRestaurant
         private int selectedId;
         private Timer animationTimer = new Timer();
         private int currentColorIndex = 0;
-        private Color[] lightColors = { Color.Red, Color.Orange, Color.Yellow, Color.Green, Color.Blue, Color.Indigo, Color.Violet };
+        public Color[] lightColors = { Color.Red, Color.Orange, Color.Yellow, Color.Green, Color.Blue, Color.Indigo, Color.Violet };
 
         public recept()
         {
@@ -22,6 +22,7 @@ namespace GestionRestaurant
             animationTimer.Tick += AnimationTimer_Tick;
             animationTimer.Start();
             LoadTablesData();
+            LoadPlatsData();
             dataGridView1.SelectionChanged += DataGridView1_SelectionChanged;
         }
         private void AnimationTimer_Tick(object sender, EventArgs e)
@@ -96,7 +97,7 @@ namespace GestionRestaurant
                 selectedId = Convert.ToInt32(dataGridView1.SelectedRows[0].Cells["ID_Plat"].Value);
                 string selectedNom = dataGridView1.SelectedRows[0].Cells["Nom"].Value.ToString();
                 string selectP = dataGridView1.SelectedRows[0].Cells["Prix"].Value.ToString();
-                label6.Text = $" Nom: {selectedNom} \nPrix : {selectP} ";
+                label6.Text = $"Nom: {selectedNom} \nPrix : {selectP} ";
 
                 LoadThumbnailForSelectedId(selectedId);
             }
@@ -119,7 +120,6 @@ namespace GestionRestaurant
 
                         using (MemoryStream ms = new MemoryStream(thumbnailBytes))
                         {
-                            // Charger l'image et redimensionner si nécessaire
                             Image thumbnail = Image.FromStream(ms);
                             int maxWidth = pictureBox1.Width;
                             int maxHeight = pictureBox1.Height;
@@ -128,6 +128,8 @@ namespace GestionRestaurant
                             {
                                 thumbnail = ScaleImage(thumbnail, maxWidth, maxHeight);
                             }
+                            pictureBox1.BorderStyle = BorderStyle.FixedSingle; 
+                            pictureBox1.SizeMode = PictureBoxSizeMode.Zoom; 
 
                             pictureBox1.Image = thumbnail;
                         }
@@ -143,6 +145,7 @@ namespace GestionRestaurant
                 MessageBox.Show("Erreur lors du chargement de la miniature : " + ex.Message, "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
+
 
         private Image ScaleImage(Image image, int maxWidth, int maxHeight)
         {
@@ -210,6 +213,8 @@ namespace GestionRestaurant
                 string client = textBox1.Text;
 
                 EnregistrerCommande(selectedIdPlat, selectedIdTable, quantite, client);
+                Livraison lvr = new Livraison();
+                lvr.LoadCommandeData();
                 comboBox1.Text = " ";
                 textBox1.Text = " ";
                 numeric.Value = 0;

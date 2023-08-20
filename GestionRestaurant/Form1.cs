@@ -1,10 +1,13 @@
-﻿using System;
+﻿using MySql.Data.MySqlClient;
+using System;
+using System.Data;
 using System.Windows.Forms;
 
 namespace GestionRestaurant
 {
     public partial class Form1 : Form
     {
+        private const string ConnectionString = "Server=localhost;Database=restaurants;Uid=zandry;Pwd=admin;";
         private Timer timer;
         private int startX;
         private int speed = 4;
@@ -12,6 +15,7 @@ namespace GestionRestaurant
         public Form1()
         {
             InitializeComponent();
+            Notification();
             recept3.Visible = false;
             Livraison lvr = new Livraison();
             lvr.LoadCommandeData();
@@ -95,5 +99,32 @@ namespace GestionRestaurant
             this.Visible = false;
             cr.Show();
         }
+        public void Notification()
+        {
+            try
+            {
+                using (MySqlConnection connection = new MySqlConnection(ConnectionString))
+                {
+                    connection.Open();
+
+                    string query = "SELECT COUNT(*) FROM commande";
+                    using (MySqlCommand cmd = new MySqlCommand(query, connection))
+                    {
+                        int count = Convert.ToInt32(cmd.ExecuteScalar());
+                        gunaGradientButton5.Text += $" {count}";
+                        recept rp = new recept();
+                        if (count > 0)
+                        {
+                            gunaGradientButton5.ForeColor = System.Drawing.Color.Crimson;
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Erreur lors du chargement des plats : {ex.Message}", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
     }
 }
